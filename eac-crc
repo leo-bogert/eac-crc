@@ -1,7 +1,30 @@
 #!/bin/bash
 
 # Source & manual of this script: https://github.com/leo-bogert/eac-crc
-# Version: 1.0
+# Version: 1.1
 
-shncat -q -e "$1" | rhash --printf="%C" -
-exit $?
+compute_crc_and_preserve_shncat_exit_code() {
+	shncat -q -e "$1" | rhash --printf="%C" -
+	return ${PIPESTATUS[0]}
+}
+
+main() {
+	if [ $# -ne 1 ] ; then
+		echo "Syntax: eac-crc filename_of_input_wav" >&2
+		exit 1
+	fi
+
+	local crc	# defining & assigning it at once would overwrite $?
+	
+	crc=$(compute_crc_and_preserve_shncat_exit_code "$1")
+	
+	if [ $? -eq 0 ] ; then
+		echo "$crc"
+		exit 0
+	else
+		echo "shncat failed!" >&2
+		exit $?
+	fi
+}
+
+main "$@"

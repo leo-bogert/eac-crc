@@ -19,8 +19,13 @@ For using it, the following packages need to be installed:
 
 # Output
 
-It prints the EAC CRC to stdout and nothing else.
-The CRC is computed by using shntool to feed the raw audio stream without the WAV header into a standard CRC32 computation.
+Upon success, it prints the EAC CRC to stdout and nothing else. The CRC is computed by using shncat to feed the raw audio stream without the WAV header into a standard CRC32 computation.
+
+Upon failure of shncat (for example when the input file is not found), nothing is printed to stdout. An error message is printed to stderr and the exit code of shncat is returned.
+
+# Exit code
+
+The exit code is equal to the exit code of "shncat -q -e (filename of WAV audio)"
 
 # Author:
 
@@ -28,7 +33,7 @@ The CRC is computed by using shntool to feed the raw audio stream without the WA
 
 # Version:
 
-1.0
+1.1
 
 # Donations:
 
