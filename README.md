@@ -15,7 +15,13 @@ For using it, the following packages need to be installed:
 
 # Syntax:
 
+For normal operation:
+
 	eac-crc (filename of WAV audio)
+
+To only print the version number:
+
+	eac-crc --version
 
 # Output
 
@@ -25,7 +31,10 @@ Upon failure of shncat (for example when the input file is not found), nothing i
 
 # Exit code
 
-The exit code is equal to the exit code of "shncat -q -e (filename of WAV audio)"
+The exit code is zero upon success and non-zero upon failure.
+
+Upon failure, the exit code of shncat or rhash might be returned.
+Shncat is piped to rhash and bash option "pipefail" is used to obtain the exit code. For determining which exit code is returned upon failure, read up the "pipefail" bash option.
 
 # Author:
 
@@ -33,7 +42,7 @@ The exit code is equal to the exit code of "shncat -q -e (filename of WAV audio)
 
 # Version:
 
-1.1
+1.2
 
 # Donations:
 

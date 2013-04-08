@@ -1,30 +1,36 @@
 #!/bin/bash
+set -o pipefail # this is absolutely critical: make pipes exit with failure if any of the involved commands fails. the default is exit status of the last command.
 
-# Source & manual of this script: https://github.com/leo-bogert/eac-crc
-# Version: 1.1
-
-compute_crc_and_preserve_shncat_exit_code() {
-	shncat -q -e "$1" | rhash --printf="%C" -
-	return ${PIPESTATUS[0]}
-}
+# Source & manual of this script: http://leo.bogert.de/eac-crc
+VERSION="1.2"
 
 main() {
-	if [ $# -ne 1 ] ; then
-		echo "Syntax: eac-crc filename_of_input_wav" >&2
+	if [ "$#" -ne 1 ] ; then
+		echo "Syntax:" >&2
+		echo "eac-crc filename_of_input_wav" >&2
+		echo "OR" >&2
+		echo "eac-crc --version" >&2
 		exit 1
+	fi
+	
+	if [ "$1" = "--version" ] ; then
+		echo "eac-crc version $VERSION"
+		exit 0
 	fi
 
 	local crc	# defining & assigning it at once would overwrite $?
+	local exit_code
 	
-	crc=$(compute_crc_and_preserve_shncat_exit_code "$1")
+	crc="$(shncat -q -e "$1" | rhash --printf="%C" -)"
+	exit_code="$?"
 	
-	if [ $? -eq 0 ] ; then
+	if [ "$exit_code" -eq 0 ] ; then
 		echo "$crc"
-		exit 0
 	else
-		echo "shncat failed!" >&2
-		exit $?
+		echo "shncat or rhash failed!" >&2
 	fi
+	
+	exit "$exit_code"
 }
 
 main "$@"
